@@ -241,13 +241,15 @@ export class WPILOGDecoder {
   getExtraHeader(): string {
     if (this.data.length < 12) return "";
     let size = this.dataView.getUint32(8, true);
-    return TEXT_DECODER.decode(this.data.subarray(12, 12 + size));
+    let end = Math.min(12 + size, this.data.length);
+    return TEXT_DECODER.decode(this.data.subarray(12, end));
   }
 
   /** Reads an integer with an arbitrary length (up to signed int64). */
   private readVariableInteger(position: number, length: number): number {
     let value = BigInt(0);
     for (let i = 0; i < Math.min(8, length); i++) {
+      if (position + i >= this.data.length) return Number(value);
       let byte = this.data[position + i];
       if (i === 7) {
         // Last byte, apply sign
