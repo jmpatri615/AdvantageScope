@@ -544,11 +544,18 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
       break;
 
     case "live-rlog-start":
-      rlogSockets[windowId]?.destroy();
-      rlogSockets[windowId] = net.createConnection({
-        host: message.data.address,
-        port: message.data.port
-      });
+      {
+        let address = message.data.address;
+        let port = Number(message.data.port);
+        if (typeof address !== "string" || address.length === 0 || !Number.isInteger(port) || port < 1 || port > 65535) {
+          sendMessage(window, "live-data", { uuid: message.data.uuid, success: false });
+          break;
+        }
+        rlogSockets[windowId]?.destroy();
+        rlogSockets[windowId] = net.createConnection({
+          host: address,
+          port: port
+        });
 
       rlogSockets[windowId].setTimeout(RLOG_CONNECT_TIMEOUT_MS, () => {
         sendMessage(window, "live-data", { uuid: message.data.uuid, status: false });
@@ -603,6 +610,7 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
       rlogSockets[windowId].on("close", () => {
         sendMessage(window, "live-data", { uuid: message.data.uuid, success: false });
       });
+      }
       break;
 
     case "live-rlog-stop":
