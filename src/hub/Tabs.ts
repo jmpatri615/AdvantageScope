@@ -588,6 +588,7 @@ export default class Tabs {
     } else {
       this.RENDERER_CONTENT.removeChild(this.tabList[index].rendererElement);
       this.CONTROLS_CONTENT.removeChild(this.tabList[index].controlsElement);
+      window.log.clearTimestampSetCache(this.tabList[index].controller.UUID);
       this.tabList.splice(index, 1);
       if (this.selectedTab > index) this.selectedTab--;
       if (this.selectedTab > this.tabList.length - 1) this.selectedTab = this.tabList.length - 1;

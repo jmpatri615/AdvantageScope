@@ -39,6 +39,7 @@ export default class Log {
   private generatedParents: Set<string> = new Set(); // Children of these fields are generated
   private timestampRange: [number, number] | null = null;
   private enableTimestampSetCache: boolean;
+  private TIMESTAMP_SET_CACHE_MAX = 50;
   private timestampSetCache: { [id: string]: { keys: string[]; timestamps: number[]; sourceCounts: number[] } } = {};
   private changedFields: Set<string> = new Set();
   private fieldUnitCache: { [id: string]: string | null } = {};
@@ -357,6 +358,10 @@ export default class Log {
         ) {
           return [...this.timestampSetCache[uuid].timestamps];
         }
+        let cacheKeys = Object.keys(this.timestampSetCache);
+        if (cacheKeys.length >= this.TIMESTAMP_SET_CACHE_MAX && !(uuid in this.timestampSetCache)) {
+          delete this.timestampSetCache[cacheKeys[0]];
+        }
         this.timestampSetCache[uuid] = {
           keys: keys,
           timestamps: [],
@@ -377,6 +382,11 @@ export default class Log {
       output = [...this.fields[keys[0]].getTimestamps()];
     }
     return output;
+  }
+
+  /** Removes a cached timestamp set entry by UUID. */
+  clearTimestampSetCache(uuid: string) {
+    delete this.timestampSetCache[uuid];
   }
 
   /** Returns the range of timestamps across all fields. */
