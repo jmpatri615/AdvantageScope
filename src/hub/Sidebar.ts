@@ -78,6 +78,10 @@ export default class Sidebar {
   private tuningValueCache: { [key: string]: string } = {};
   private updateMetadataCallbacks: (() => void)[] = [];
   private updateLoadingCallbacks: ((loadingFields: Set<string>) => void)[] = [];
+  private pendingDrag: {
+    mouseDownInfo: [number, number, number, number];
+    dragEvent: (x: number, y: number, offsetX: number, offsetY: number) => void;
+  } | null = null;
 
   constructor(getFilenames: () => string[]) {
     this.getFilenames = getFilenames;
@@ -112,6 +116,16 @@ export default class Sidebar {
         }
         this.sidebarWidth = width;
         this.updateWidth();
+      }
+      if (this.pendingDrag !== null) {
+        let info = this.pendingDrag.mouseDownInfo;
+        if (
+          Math.abs(event.clientX - info[0]) >= this.FIELD_DRAG_THRESHOLD_PX ||
+          Math.abs(event.clientY - info[1]) >= this.FIELD_DRAG_THRESHOLD_PX
+        ) {
+          this.pendingDrag.dragEvent(info[0], info[1], info[2], info[3]);
+          this.pendingDrag = null;
+        }
       }
     });
     let lastClick = 0;
@@ -615,6 +629,7 @@ export default class Sidebar {
     label.addEventListener("contextmenu", (event) => {
       event.preventDefault();
       mouseDownInfo = null;
+      this.pendingDrag = null;
       window.sendMainMessage("ask-open-sidebar-context-menu", {
         title: title,
         fullTitle: fullTitle,
@@ -653,19 +668,10 @@ export default class Sidebar {
         };
         label.addEventListener("mousedown", (event) => {
           mouseDownInfo = [event.clientX, event.clientY, event.offsetX, event.offsetY];
-        });
-        window.addEventListener("mousemove", (event) => {
-          if (mouseDownInfo !== null) {
-            if (
-              Math.abs(event.clientX - mouseDownInfo[0]) >= this.FIELD_DRAG_THRESHOLD_PX ||
-              Math.abs(event.clientY - mouseDownInfo[1]) >= this.FIELD_DRAG_THRESHOLD_PX
-            ) {
-              dragEvent(mouseDownInfo[0], mouseDownInfo[1], mouseDownInfo[2], mouseDownInfo[3]);
-              mouseDownInfo = null;
-            }
-          }
+          this.pendingDrag = { mouseDownInfo: mouseDownInfo, dragEvent: dragEvent };
         });
         label.addEventListener("mouseup", (event) => {
+          this.pendingDrag = null;
           if (mouseDownInfo !== null) {
             if (
               (event.ctrlKey || event.metaKey) &&
