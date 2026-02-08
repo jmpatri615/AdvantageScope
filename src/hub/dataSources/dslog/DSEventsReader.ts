@@ -44,7 +44,7 @@ export class DSEventsReader {
 
   /** Runs the specified function for each record in the log. */
   forEach(callback: (record: DSEventsEntry) => void) {
-    if (!this.isSupportedVersion()) throw "Log is not a supported version";
+    if (!this.isSupportedVersion()) throw new Error("Log is not a supported version");
     let position = 4 + 8 + 8; // Header size
     let startTime = this.getTimestamp();
 

@@ -229,7 +229,7 @@ export default class PhoenixDiagnosticsSource extends LiveDataSource {
       signal: AbortSignal.timeout(this.GET_DEVICES_TIMEOUT)
     });
     let json = (await response.json()) as Response_GetDevices;
-    if (json.GeneralReturn.Error !== 0) throw "Non-zero error code";
+    if (json.GeneralReturn.Error !== 0) throw new Error("Non-zero error code");
     return json.DeviceArray;
   }
 
@@ -251,7 +251,7 @@ export default class PhoenixDiagnosticsSource extends LiveDataSource {
       }
     );
     let json = (await response.json()) as Response_GetSignals;
-    if (json.GeneralReturn.Error !== 0) throw "Non-zero error code";
+    if (json.GeneralReturn.Error !== 0) throw new Error("Non-zero error code");
     return json.Signals;
   }
 
@@ -277,7 +277,7 @@ export default class PhoenixDiagnosticsSource extends LiveDataSource {
       }
     );
     let json = (await response.json()) as Response_PlotPro;
-    if (json.GeneralReturn.Error !== 0) throw "Non-zero error code";
+    if (json.GeneralReturn.Error !== 0) throw new Error("Non-zero error code");
     return json.Points;
   }
 }

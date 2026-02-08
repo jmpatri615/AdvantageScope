@@ -74,7 +74,7 @@ export class WPILOGDecoderRecord {
 
   /** Decodes a start control record. */
   getStartData(): StartRecordData {
-    if (!this.isStart()) throw "Not a start control record";
+    if (!this.isStart()) throw new Error("Not a start control record");
 
     let stringResult: { string: string; position: number };
     let entry = this.dataView.getUint32(1, true);
@@ -94,13 +94,13 @@ export class WPILOGDecoderRecord {
 
   /** Decodes a finish control record. */
   getFinishEntry(): number {
-    if (!this.isFinish()) throw "Not a finish control record";
+    if (!this.isFinish()) throw new Error("Not a finish control record");
     return this.dataView.getUint32(1, true);
   }
 
   /** Decodes a set metadata control record. */
   getSetMetadataData(): MetadataRecordData {
-    if (!this.isSetMetadata()) throw "Not a set metadata control record";
+    if (!this.isSetMetadata()) throw new Error("Not a set metadata control record");
 
     return {
       entry: this.dataView.getUint32(1, true),
@@ -115,25 +115,25 @@ export class WPILOGDecoderRecord {
 
   /** Decodes a data record as a boolean. */
   getBoolean(): boolean {
-    if (this.data.length !== 1) throw "Not a boolean";
+    if (this.data.length !== 1) throw new Error("Not a boolean");
     return this.data[0] !== 0;
   }
 
   /** Decodes a data record as an integer. */
   getInteger(): number {
-    if (this.data.length !== 8) throw "Not an integer";
+    if (this.data.length !== 8) throw new Error("Not an integer");
     return Number(this.dataView.getBigInt64(0, true));
   }
 
   /** Decodes a data record as a float. */
   getFloat(): number {
-    if (this.data.length !== 4) throw "Not a float";
+    if (this.data.length !== 4) throw new Error("Not a float");
     return this.dataView.getFloat32(0, true);
   }
 
   /** Decodes a data record as a double. */
   getDouble(): number {
-    if (this.data.length !== 8) throw "Not a double";
+    if (this.data.length !== 8) throw new Error("Not a double");
     return this.dataView.getFloat64(0, true);
   }
 
@@ -153,7 +153,7 @@ export class WPILOGDecoderRecord {
 
   /** Decodes a data record as an integer array. */
   getIntegerArray(): number[] {
-    if (this.data.length % 8 !== 0) throw "Not an integer array";
+    if (this.data.length % 8 !== 0) throw new Error("Not an integer array");
     let array: number[] = [];
     for (let position = 0; position < this.data.length; position += 8) {
       array.push(Number(this.dataView.getBigInt64(position, true)));
@@ -163,7 +163,7 @@ export class WPILOGDecoderRecord {
 
   /** Decodes a data record as a float array. */
   getFloatArray(): number[] {
-    if (this.data.length % 4 !== 0) throw "Not a float array";
+    if (this.data.length % 4 !== 0) throw new Error("Not a float array");
     let array: number[] = [];
     for (let position = 0; position < this.data.length; position += 4) {
       array.push(this.dataView.getFloat32(position, true));
@@ -173,7 +173,7 @@ export class WPILOGDecoderRecord {
 
   /** Decodes a data record as a double array. */
   getDoubleArray(): number[] {
-    if (this.data.length % 8 !== 0) throw "Not a double array";
+    if (this.data.length % 8 !== 0) throw new Error("Not a double array");
     let array: number[] = [];
     for (let position = 0; position < this.data.length; position += 8) {
       array.push(this.dataView.getFloat64(position, true));
@@ -184,7 +184,7 @@ export class WPILOGDecoderRecord {
   /** Decodes a data record as a string array. */
   getStringArray(): string[] {
     let size = this.dataView.getUint32(0, true);
-    if (size > (this.data.length - 4) / 4) throw "Not a string array";
+    if (size > (this.data.length - 4) / 4) throw new Error("Not a string array");
     let array: string[] = [];
     let position = 4;
     for (let i = 0; i < size; i++) {
@@ -199,7 +199,7 @@ export class WPILOGDecoderRecord {
   private readInnerString(position: number): { string: string; position: number } {
     let size = this.dataView.getUint32(position, true);
     let end = position + 4 + size;
-    if (end > this.data.length) throw "Invalid string size";
+    if (end > this.data.length) throw new Error("Invalid string size");
     return {
       string: TEXT_DECODER.decode(this.data.subarray(position + 4, end)),
       position: end
@@ -265,7 +265,7 @@ export class WPILOGDecoder {
 
   /** Runs the specified function for each record in the log. */
   forEach(callback: (record: WPILOGDecoderRecord, byteCount: number) => void) {
-    if (!this.isValid()) throw "Log is not valid";
+    if (!this.isValid()) throw new Error("Log is not valid");
     let extraHeaderSize = this.dataView.getUint32(8, true);
     let position = 12 + extraHeaderSize;
     while (true) {

@@ -66,7 +66,7 @@ export default class RRLOGDecoder {
       } else if (schemaType === 7) {
         return new ArraySchema(readSchema());
       } else {
-        throw "Unknown schema type: " + schemaType;
+        throw new Error("Unknown schema type: " + schemaType);
       }
     }
 
@@ -113,7 +113,7 @@ export default class RRLOGDecoder {
         }
         return msg;
       } else {
-        throw "Unknown schema type: " + schema;
+        throw new Error("Unknown schema type: " + schema);
       }
     }
 

@@ -902,7 +902,7 @@ export default class SourceList {
    */
   private updateItem(item: HTMLElement, state: SourceListItemState) {
     let typeConfig = this.config.types.find((typeConfig) => typeConfig.key === state.type);
-    if (typeConfig === undefined) throw 'Unknown type "' + state.type + '"';
+    if (typeConfig === undefined) throw new Error('Unknown type "' + state.type + '"');
 
     // Update type icon
     let typeIconVisible = item.getElementsByTagName("object")[0] as HTMLObjectElement;

@@ -780,7 +780,7 @@ export namespace Units {
   export const ALL_UNITS: UnitCollection = Object.assign({}, ...Object.values(UNIT_GROUPS));
 
   export function convert(value: number, from: string, to: string): number {
-    if (!(from in ALL_UNITS && to in ALL_UNITS)) throw "Invalid unit provided";
+    if (!(from in ALL_UNITS && to in ALL_UNITS)) throw new Error("Invalid unit provided");
 
     let standardValue;
     if (from === "fahrenheit") {

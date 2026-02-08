@@ -30,7 +30,7 @@ export default class CSVDecoder {
 
         for (const byte of valueSplit) {
           if (byte.length != 2) {
-            throw "Invalid byte: " + byte;
+            throw new Error("Invalid byte: " + byte);
           }
         }
 
@@ -38,7 +38,7 @@ export default class CSVDecoder {
 
         for (const byte of value) {
           if (!Number.isInteger(byte) || byte < 0 || byte > 255) {
-            throw "Invalid byte: " + byte;
+            throw new Error("Invalid byte: " + byte);
           }
         }
 
@@ -101,7 +101,7 @@ export default class CSVDecoder {
 
         const columns = row.split(",");
         if (columns.length != 3) {
-          throw `Invalid number of columns (expected 3): ${columns.length}`;
+          throw new Error(`Invalid number of columns (expected 3): ${columns.length}`);
         }
 
         const [timestampRaw, key, valueRaw] = columns;
@@ -120,7 +120,7 @@ export default class CSVDecoder {
 
         const columns = row.split(",");
         if (columns.length != keys.length) {
-          throw `Invalid number of columns (expected ${keys.length}): ${columns.length}`;
+          throw new Error(`Invalid number of columns (expected ${keys.length}): ${columns.length}`);
         }
 
         const timestamp = Number.parseFloat(columns[0]);
@@ -136,7 +136,7 @@ export default class CSVDecoder {
         }
       });
     } else {
-      throw `Could not recognize columns: ${rows[0]}`;
+      throw new Error(`Could not recognize columns: ${rows[0]}`);
     }
   }
 }

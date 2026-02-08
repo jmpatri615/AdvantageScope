@@ -60,7 +60,7 @@ export class DSLogReader {
 
   /** Runs the specified function for each record in the log. */
   forEach(callback: (record: DSLogEntry) => void) {
-    if (!this.isSupportedVersion()) throw "Log is not a supported version";
+    if (!this.isSupportedVersion()) throw new Error("Log is not a supported version");
     let position = 4 + 8 + 8; // Header size
     let timestamp = 0;
     let lastBatteryVolts = 0;

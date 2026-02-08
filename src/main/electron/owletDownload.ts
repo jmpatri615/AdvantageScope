@@ -68,9 +68,9 @@ export async function downloadOwletInternal(target: string, platform: string, st
   const owletPlatform = getOwletPlatform(platform);
   const request = await fetch(INDEX_URL);
   const redistIndex: CTRERedistIndex = await request.json();
-  if (redistIndex.JsonVersion !== "1.0.0.0") throw "Invalid JSON version";
+  if (redistIndex.JsonVersion !== "1.0.0.0") throw new Error("Invalid JSON version");
   const owletIndex = redistIndex.Tools.find((tool) => tool.Name === "owlet");
-  if (owletIndex === undefined) throw "Owlet not available in index";
+  if (owletIndex === undefined) throw new Error("Owlet not available in index");
 
   // Loop through each compliancy version
   for (let i = 0; i < redistIndex.ChannelCompliancy.length; i++) {

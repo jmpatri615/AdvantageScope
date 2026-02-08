@@ -106,20 +106,20 @@ export default class RLOGDecoder {
                 let type = this.keyTypes[keyID];
                 switch (type) {
                   case "boolean":
-                    if (value.length !== 1) throw "Not a boolean";
+                    if (value.length !== 1) throw new Error("Not a boolean");
                     log.putBoolean(key, timestamp, value[0] !== 0);
                     break;
                   case "int":
                   case "int64":
-                    if (value.length !== 8) throw "Not an integer";
+                    if (value.length !== 8) throw new Error("Not an integer");
                     log.putNumber(key, timestamp, Number(dataBuffer.getBigInt64(offset)));
                     break;
                   case "float":
-                    if (value.length !== 4) throw "Not a float";
+                    if (value.length !== 4) throw new Error("Not a float");
                     log.putNumber(key, timestamp, Number(dataBuffer.getFloat32(offset)));
                     break;
                   case "double":
-                    if (value.length !== 8) throw "Not a double";
+                    if (value.length !== 8) throw new Error("Not a double");
                     log.putNumber(key, timestamp, Number(dataBuffer.getFloat64(offset)));
                     break;
                   case "string":
@@ -137,7 +137,7 @@ export default class RLOGDecoder {
                   case "int[]":
                   case "int64[]":
                     {
-                      if (value.length % 8 !== 0) throw "Not an integer array";
+                      if (value.length % 8 !== 0) throw new Error("Not an integer array");
                       let array: number[] = [];
                       for (let position = 0; position < value.length; position += 8) {
                         array.push(Number(dataBuffer.getBigInt64(offset + position)));
@@ -147,7 +147,7 @@ export default class RLOGDecoder {
                     break;
                   case "float[]":
                     {
-                      if (value.length % 4 !== 0) throw "Not a float array";
+                      if (value.length % 4 !== 0) throw new Error("Not a float array");
                       let array: number[] = [];
                       for (let position = 0; position < value.length; position += 4) {
                         array.push(dataBuffer.getFloat32(offset + position));
@@ -157,7 +157,7 @@ export default class RLOGDecoder {
                     break;
                   case "double[]":
                     {
-                      if (value.length % 8 !== 0) throw "Not a double array";
+                      if (value.length % 8 !== 0) throw new Error("Not a double array");
                       let array: number[] = [];
                       for (let position = 0; position < value.length; position += 8) {
                         array.push(dataBuffer.getFloat64(offset + position));
@@ -168,7 +168,7 @@ export default class RLOGDecoder {
                   case "string[]":
                     {
                       let size = dataBuffer.getUint32(offset);
-                      if (size > (value.length - 4) / 4) throw "Not a string array";
+                      if (size > (value.length - 4) / 4) throw new Error("Not a string array");
                       let array: string[] = [];
                       let position = 4;
                       for (let i = 0; i < size; i++) {

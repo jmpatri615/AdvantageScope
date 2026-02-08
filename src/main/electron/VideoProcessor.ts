@@ -236,7 +236,7 @@ export class VideoProcessor {
         defaultId: 0,
         icon: WINDOW_ICON
       });
-      throw "Failed";
+      throw new Error("Failed");
     }
 
     // Download FFmpeg on Windows and macOS
@@ -251,7 +251,7 @@ export class VideoProcessor {
       icon: WINDOW_ICON
     });
     if (ffmpegDownloadResponse.response === 1) {
-      throw "Failed";
+      throw new Error("Failed");
     }
 
     // Perform download
@@ -273,7 +273,7 @@ export class VideoProcessor {
       console.warn("\tFound: " + hash);
       console.warn("\tExpected: " + downloadInfo.sha256);
       fs.rmSync(path.join(folder, filenameTemp));
-      throw "Failed";
+      throw new Error("Failed");
     }
     fs.renameSync(path.join(folder, filenameTemp), path.join(folder, filename));
     fs.chmodSync(path.join(folder, filename), 0o755);

@@ -385,7 +385,7 @@ export default class NT4Source extends LiveDataSource {
 
   getTuner() {
     if (this.client === null || this.log === null) {
-      throw "Cannot create NT4 tuner before starting connection";
+      throw new Error("Cannot create NT4 tuner before starting connection");
     } else {
       return new NT4Tuner(this.client, this.akitMode);
     }

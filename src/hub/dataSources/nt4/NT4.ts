@@ -268,7 +268,7 @@ export class NT4_Client {
   unsubscribe(subscriptionId: number) {
     let subscription = this.subscriptions.get(subscriptionId);
     if (!subscription) {
-      throw 'Unknown subscription ID "' + subscriptionId + '"';
+      throw new Error('Unknown subscription ID "' + subscriptionId + '"');
     }
     this.subscriptions.delete(subscriptionId);
     if (this.serverConnectionActive) {
@@ -352,7 +352,7 @@ export class NT4_Client {
   unpublishTopic(topic: string) {
     let topicObj = this.publishedTopics.get(topic);
     if (!topicObj) {
-      throw 'Topic "' + topic + '" not found';
+      throw new Error('Topic "' + topic + '" not found');
     }
     this.publishedTopics.delete(topic);
     if (this.serverConnectionActive) {
@@ -371,7 +371,7 @@ export class NT4_Client {
   addTimestampedSample(topic: string, timestamp: number, value: any) {
     let topicObj = this.publishedTopics.get(topic);
     if (!topicObj) {
-      throw 'Topic "' + topic + '" not found';
+      throw new Error('Topic "' + topic + '" not found');
     }
     let txData = this.msgpackEncoder.encode([topicObj.uid, timestamp, topicObj.getTypeIdx(), value]);
     this.ws_sendBinary(txData);
