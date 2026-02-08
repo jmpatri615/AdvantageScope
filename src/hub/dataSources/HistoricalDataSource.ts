@@ -155,6 +155,7 @@ export class HistoricalDataSource {
     // Process response
     let offset = 0;
     this.worker.onmessage = (event) => {
+      if (this.status === HistoricalDataSourceStatus.Stopped || this.status === HistoricalDataSourceStatus.Error) return;
       let message = event.data as HistoricalDataSource_WorkerResponse;
       switch (message.type) {
         case "progress":
