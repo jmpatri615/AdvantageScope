@@ -46,6 +46,7 @@ export default class SourceList {
   private DRAG_ITEM = document.getElementById("dragItem") as HTMLElement;
 
   private stopped = false;
+  private rafId: number | null = null;
   private config: SourceListConfig;
   private configStr: string;
   private state: SourceListState = [];
@@ -270,9 +271,9 @@ export default class SourceList {
       // Update value previews
       this.updateAllPreviews();
 
-      window.requestAnimationFrame(periodic);
+      this.rafId = window.requestAnimationFrame(periodic);
     };
-    window.requestAnimationFrame(periodic);
+    this.rafId = window.requestAnimationFrame(periodic);
   }
 
   setTitle(title: string): void {
@@ -319,6 +320,10 @@ export default class SourceList {
 
   stop() {
     this.stopped = true;
+    if (this.rafId !== null) {
+      window.cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
   }
 
   /** Removes all items in the source list. */
