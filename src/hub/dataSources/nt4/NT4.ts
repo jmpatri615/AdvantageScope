@@ -619,15 +619,15 @@ export class NT4_Client {
         // Validate types
         if (typeof topicID !== "number") {
           console.warn("[NT4] Ignoring binary data, topic ID is not a number");
-          return;
+          continue;
         }
         if (typeof timestamp_us !== "number") {
           console.warn("[NT4] Ignoring binary data, timestamp is not a number");
-          return;
+          continue;
         }
         if (typeof typeIdx !== "number") {
           console.warn("[NT4] Ignoring binary data, type index is not a number");
-          return;
+          continue;
         }
 
         // Process data
@@ -644,7 +644,7 @@ export class NT4_Client {
           }
           if (!topic) {
             console.warn("[NT4] Ignoring binary data - unknown topic ID " + topicID.toString());
-            return;
+            continue;
           }
           this.onNewTopicData(topic, timestamp_us, value);
         } else if (topicID === -1) {
