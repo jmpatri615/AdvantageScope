@@ -94,6 +94,13 @@ try {
   lzma = require("lzma-native");
 } catch (e) {}
 
+/** Opens a URL in the default browser if it uses a safe scheme. */
+function safeOpenExternal(url: string) {
+  if (typeof url === "string" && (url.startsWith("https://") || url.startsWith("http://") || url.startsWith("mailto:"))) {
+    shell.openExternal(url);
+  }
+}
+
 // Global variables
 let hubWindows: BrowserWindow[] = []; // Ordered by last focus time (recent first)
 let downloadWindow: BrowserWindow | null = null;
@@ -603,7 +610,7 @@ async function handleHubMessage(window: BrowserWindow, message: NamedMessage) {
       break;
 
     case "open-link":
-      shell.openExternal(message.data);
+      safeOpenExternal(message.data);
       break;
 
     case "ask-open-sidebar-context-menu":
@@ -2618,7 +2625,7 @@ function createHubWindow(state?: WindowState) {
 
   // Open docs URLs in browser
   window.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url);
+    safeOpenExternal(details.url);
     return { action: "deny" };
   });
 
@@ -2964,7 +2971,7 @@ function createExportWindow(
         sendMessage(parentWindow, "cancel-export");
       } else if (typeof event.data === "string") {
         // Help button
-        shell.openExternal(event.data);
+        safeOpenExternal(event.data);
       } else if (typeof event.data === "object") {
         // Confirm
         let exportOptions: ExportOptions = event.data;
@@ -3126,7 +3133,7 @@ function createSatellite(
           break;
 
         case "open-link":
-          shell.openExternal(message.data);
+          safeOpenExternal(message.data);
           break;
 
         default:
@@ -3154,7 +3161,7 @@ function createSatellite(
   });
   satellite.webContents.setWindowOpenHandler((details) => {
     // Open docs URLs in browser
-    shell.openExternal(details.url);
+    safeOpenExternal(details.url);
     return { action: "deny" };
   });
   powerMonitor.on("on-ac", () => sendMessage(satellite, "set-battery", false));
