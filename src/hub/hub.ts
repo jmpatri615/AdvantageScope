@@ -197,11 +197,11 @@ function restoreState(state: HubState) {
   window.tabs.restoreState(state.tabs);
 }
 
-setInterval(() => {
+let stateSaveInterval = setInterval(() => {
   window.sendMainMessage("save-state", saveState());
 }, STATE_SAVE_PERIOD_MS);
 
-setInterval(() => {
+let typeMemorySaveInterval = setInterval(() => {
   window.sendMainMessage("save-type-memory", window.typeMemory);
 }, TYPE_MEMORY_SAVE_PERIOD_MS);
 
@@ -539,7 +539,7 @@ FEEDBACK_BUTTON.addEventListener("click", () => {
 });
 
 // Update touch bar slider position
-setInterval(() => {
+let touchBarInterval = setInterval(() => {
   if (window.platform === "darwin") {
     let range = window.log.getTimestampRange();
     let liveTime = window.selection.getCurrentLiveTime();
@@ -554,6 +554,12 @@ setInterval(() => {
     window.sendMainMessage("update-touch-bar-slider", timePercent);
   }
 }, 1000 / 60);
+
+window.addEventListener("beforeunload", () => {
+  clearInterval(stateSaveInterval);
+  clearInterval(typeMemorySaveInterval);
+  clearInterval(touchBarInterval);
+});
 
 async function handleMainMessage(message: NamedMessage) {
   switch (message.name) {
