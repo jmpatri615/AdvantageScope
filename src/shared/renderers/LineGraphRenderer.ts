@@ -126,29 +126,20 @@ export default class LineGraphRenderer implements TabRenderer {
     let light = !window.matchMedia("(prefers-color-scheme: dark)").matches;
 
     // Exit if render state unchanged
-    let renderState: any[] = [
-      width,
-      height,
-      light,
-      devicePixelRatio,
-      command.timeRange,
-      command.selectionMode,
-      command.selectedTime,
-      command.hoveredTime,
-      command.grabZoomRange,
-      command.leftRange,
-      command.rightRange,
-      command.showLeftAxis,
-      command.showRightAxis,
-      command.leftUnits,
-      command.rightUnits,
-      command.priorityAxis,
-      this.lastCursorX,
-      command.leftFields.map((field) => [field.values.length, field.color, field.type, field.size]),
-      command.discreteFields.map((field) => [field.values.length, field.color, field.type, field.toggleReference]),
-      command.rightFields.map((field) => [field.values.length, field.color, field.type, field.size])
-    ];
-    let renderStateString = JSON.stringify(renderState);
+    let fieldSummary = "";
+    for (const field of command.leftFields) fieldSummary += field.values.length + "," + field.color + "," + field.type + "," + field.size + ";";
+    fieldSummary += "|";
+    for (const field of command.discreteFields) fieldSummary += field.values.length + "," + field.color + "," + field.type + "," + field.toggleReference + ";";
+    fieldSummary += "|";
+    for (const field of command.rightFields) fieldSummary += field.values.length + "," + field.color + "," + field.type + "," + field.size + ";";
+    let renderStateString =
+      width + "," + height + "," + light + "," + devicePixelRatio + "," +
+      command.timeRange + "," + command.selectionMode + "," + command.selectedTime + "," +
+      command.hoveredTime + "," + command.grabZoomRange + "," +
+      command.leftRange + "," + command.rightRange + "," +
+      command.showLeftAxis + "," + command.showRightAxis + "," +
+      command.leftUnits + "," + command.rightUnits + "," +
+      command.priorityAxis + "," + this.lastCursorX + "," + fieldSummary;
     if (renderStateString === this.lastRenderState) {
       return;
     }
